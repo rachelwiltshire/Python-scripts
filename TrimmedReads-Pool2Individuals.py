@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #TrimmedReads-Pool2Individuals.py
-#Author: Rachel Wiltshire (U. Notre Dam) October 2016
+#Author: Rachel Wiltshire, U. Notre Dame, October 2016.
 #Creates individual fasta files containing trimmed reads (from trimmer.py processing) specific to IDs from pooled FWD and REV files
 
 #Usage: Give 2 <arguments> in addition to the script.py in this format:
