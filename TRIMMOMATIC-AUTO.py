@@ -10,7 +10,8 @@
 #Broad Institute (16 Anopheles genomes project)
 
 #Import default system
-import sys
+import sys, gzip, glob, fileinput
+
 
 #If no arguments were given, print helpful message
 if len(sys.argv) != X:
@@ -19,3 +20,8 @@ if len(sys.argv) != X:
 
 module load bio
 
+inputdir = '~/FARAUTI/SRA_downloads'
+outputdir = '~/FARAUTI/TERMINAL'
+
+with gzip.open('/home/joe/file.txt.gz', 'rt') as f:
+    file_content = f.read()
