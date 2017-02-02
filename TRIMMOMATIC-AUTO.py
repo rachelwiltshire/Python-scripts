@@ -42,11 +42,12 @@ for filename in os.listdir(indir):
                         f2parts = g.name.rsplit("_", 1)
                         f2paired = f2parts[0] + "_2.paired.fq"
                         f2unpaired = f2parts[0] + "_2.unpaired.fq"
-                        trimlog = f1parts[0]
+                        trimlog = f1parts[0] + ".trimlog"
                 
                         #Define trimmomatic parameters
-                        trimmomaticCMD = trimmomatic + " PE -threads 8 -phred33 -trimlog " + trimlog + " " + f1 + " " + f2 + " " + outdir + f1paired + " " + \
-                                outdir + f1unpaired + " " + outdir + f2paired + " " + outdir + f2unpaired + " " + illclip + " " + lead + " " + trail + " " + slide + " " + minlen
+                        trimmomaticCMD = trimmomatic + " PE -threads 8 -phred33 -trimlog " + trimlog + " " + f1 + " " + f2 + \
+                                + " " + outdir + f1paired + " " + outdir + f1unpaired + " " + outdir + f2paired + " " + \
+                                outdir + f2unpaired + " " + illclip + " " + lead + " " + trail + " " + slide + " " + minlen
                         
                         print trimmomaticCMD
                         
