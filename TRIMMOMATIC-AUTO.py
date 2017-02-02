@@ -12,7 +12,7 @@
 import os, gzip, subprocess
 
 #Set variables
-indir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/SRA_downloads/test'
+indir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/SRA_downloads'
 outdir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/TERMINAL/'
 trimmomatic = '/opt/crc/bio/Trimmomatic/0.32/bin/trimmomatic'
 illclip = 'ILLUMINACLIP:/afs/crc.nd.edu/user/r/rwiltshi/GROUP_SOLOMON/rwiltshi/AGam_chromosomes/TruSeq3-PE.fa:2:30:10'
