@@ -12,35 +12,47 @@
 import os, gzip, subprocess
 
 #Set variables
-indir = '~/FARAUTI/SRA_downloads'
-outdir = '~/FARAUTI/TERMINAL'
-trimmomatic = '/opt/crc/bio/Trimmomatic'
+indir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/SRA_downloads/test'
+outdir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/TERMINAL/'
+trimmomatic = '/opt/crc/bio/Trimmomatic/0.32/bin/trimmomatic'
 illclip = 'ILLUMINACLIP:/afs/crc.nd.edu/user/r/rwiltshi/GROUP_SOLOMON/rwiltshi/AGam_chromosomes/TruSeq3-PE.fa:2:30:10'
 lead = 'LEADING:5'
 trail = 'TRAILING:5'
 slide = 'SLIDINGWINDOW:4:15'
 minlen = 'MINLEN:50'
 
+f1 = ""
+f2 = ""
+
+#Read through files in input directory and find matching pair (SRX_AND_RUN_1.fastq.gz and SRX_AND_RUN_2.fastq.gz)
 for filename in os.listdir(indir):
         if filename.endswith("_1.fastq.gz"):
                 f1 = filename
         elif filename.endswith("_2.fastq.gz"):
                 f2 = filename
-
-                with gzip.open('f1', 'rt', 'wt') and gzip.open('f2', 'rt', 'wt') as f:
-                        f1parts = f1.split("_")
-                        f1paired = f1parts[0:2] + "_1.paired.fq"
-                        f1unpaired = f1parts[0:2] + "_1.unpaired.fq"
-                        f2parts = f2.split("_")
-                        f2paired = f2parts[0:2] + "_2.paired.fq"
-                        f2unpaired = f2parts[0:2] + "_2.unpaired.fq"
-                        trimlog = f1parts[0:2]
-                        cd outdir
+        else:
+                continue
         
-                        subprocess.call(['trimmomatic', 'PE', '-threads 8', '-phred33', '-trimlog', 'f1', 'f2', 'f1paired', 'f1unpaired', 'f2paired', 'f2unpaired', 'illclip', 'lead', 'trail', 'slide', 'minlen'])
-PE -threads 8 -phred33 -trimlog filename \
-SRX277192_Tanna2_run1-SRR849988-_1.fastq SRX277192_Tanna2_run1-SRR849988-_2.fastq \
-SRX277192_Tanna2_run1-SRR849988-_1.paired.fq SRX277192_Tanna2_run1-SRR849988-_1.unpaired.fq \
-SRX277192_Tanna2_run1-SRR849988-_2.paired.fq SRX277192_Tanna2_run1-SRR849988-_2.unpaired.fq \
-ILLUMINACLIP:/afs/crc.nd.edu/user/r/rwiltshi/GROUP_SOLOMON/rwiltshi/AGam_chromosomes/TruSeq3-PE.fa:2:30:10 LEADING:5 TRAILING:5 SLIDINGWINDOW:4:15 MINLEN:50
-else: continue
+        #If you've found a matching file pair that both have content, unzip them and set variables
+        if ((f1 != "" and f2 != "") and (f1[0:-11] == f2[0:-11])):      
+                with gzip.open(f1) as f, gzip.open(f2) as g:
+                        f1parts = f.name.rsplit("_", 1)
+                        f1paired = f1parts[0] + "_1.paired.fq"
+                        f1unpaired = f1parts[0] + "_1.unpaired.fq"
+                        f2parts = g.name.rsplit("_", 1)
+                        f2paired = f2parts[0] + "_2.paired.fq"
+                        f2unpaired = f2parts[0] + "_2.unpaired.fq"
+                        trimlog = f1parts[0]
+                
+                        #Define trimmomatic parameters
+                        trimmomaticCMD = trimmomatic + " PE -threads 8 -phred33 -trimlog " + trimlog + " " + f1 + " " + f2 + " " + outdir + f1paired + " " + \
+                                outdir + f1unpaired + " " + outdir + f2paired + " " + outdir + f2unpaired + " " + illclip + " " + lead + " " + trail + " " + slide + " " + minlen
+                        
+                        print trimmomaticCMD
+                        
+                        #Call the command in the Python script and set it to execute through the shell
+                        subprocess.call(trimmomaticCMD, shell=True)
+                        f1 = ""
+                        f2 = ""
+
+#END
