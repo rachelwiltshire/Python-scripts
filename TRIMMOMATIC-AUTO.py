@@ -13,7 +13,7 @@ import os, gzip, subprocess
 
 #Set variables
 indir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/SRA_downloads'
-outdir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/TERMINAL/'
+outdir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/TERMINAL/trimmed/'
 trimmomatic = '/opt/crc/bio/Trimmomatic/0.32/bin/trimmomatic'
 illclip = 'ILLUMINACLIP:/afs/crc.nd.edu/user/r/rwiltshi/GROUP_SOLOMON/rwiltshi/AGam_chromosomes/TruSeq3-PE.fa:2:30:10'
 lead = 'LEADING:5'
@@ -45,9 +45,10 @@ for filename in os.listdir(indir):
                         trimlog = f1parts[0] + ".trimlog"
                 
                         #Define trimmomatic parameters
-                        trimmomaticCMD = trimmomatic + " PE -threads 8 -phred33 -trimlog " + trimlog + " " + f1 + " " + f2 + \
-                                + " " + outdir + f1paired + " " + outdir + f1unpaired + " " + outdir + f2paired + " " + \
-                                outdir + f2unpaired + " " + illclip + " " + lead + " " + trail + " " + slide + " " + minlen
+                        trimmomaticCMD = trimmomatic + " PE -threads 8 -phred33 -trimlog " + outdir + trimlog + \
+                                + " " + f1 + " " + f2 + " " + outdir + f1paired + " " + outdir + f1unpaired + " " + \
+                                + outdir + f2paired + " " + outdir + f2unpaired + " " + \
+                                + illclip + " " + lead + " " + trail + " " + slide + " " + minlen
                         
                         print trimmomaticCMD
                         
