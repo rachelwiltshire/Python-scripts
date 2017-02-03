@@ -44,11 +44,10 @@ for filename in os.listdir(indir):
                         f2unpaired = f2parts[0] + "_2.unpaired.fq"
                         trimlog = f1parts[0] + ".trimlog"
                 
-                        #Define trimmomatic parameters
+                        #Define trimmomatic parameters in the command
                         trimmomaticCMD = trimmomatic + " PE -threads 8 -phred33 -trimlog " + outdir + trimlog + \
-                                + " " + f1 + " " + f2 + " " + outdir + f1paired + " " + outdir + f1unpaired + " " + \
-                                + outdir + f2paired + " " + outdir + f2unpaired + " " + \
-                                + illclip + " " + lead + " " + trail + " " + slide + " " + minlen
+                                " " + f1 + " " + f2 + " " + outdir + f1paired + " " + outdir + f1unpaired + " " + \
+                                outdir + f2paired + " " + outdir + f2unpaired + " " + illclip + " " + lead + " " + trail + " " + slide + " " + minlen
                         
                         print trimmomaticCMD
                         
