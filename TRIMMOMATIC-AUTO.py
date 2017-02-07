@@ -3,7 +3,7 @@
 #Author: Rachel Wiltshire, U. Notre Dame, January 2017
 #Automated Trimmomatic usage for multiple samples - removes Illumina adapters and trims poor quality reads
 
-#Usage: Call python and TRIMMOMATIC-AUTO.py
+#Usage: Navigate to indir; call python and TRIMMOMATIC-AUTO.py
 
 #This script is specifically for the WGS gDNA PE libraries AFar April 2013 sequenced on Illumina HiSeq2000 v.1.9
 #Broad Institute (16 Anopheles genomes project)
@@ -12,7 +12,7 @@
 import os, gzip, subprocess
 
 #Set variables
-indir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/SRA_downloads'
+indir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/SRA_downloads/'
 outdir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/TERMINAL/trimmed/'
 trimmomatic = '/opt/crc/bio/Trimmomatic/0.32/bin/trimmomatic'
 illclip = 'ILLUMINACLIP:/afs/crc.nd.edu/user/r/rwiltshi/GROUP_SOLOMON/rwiltshi/AGam_chromosomes/TruSeq3-PE.fa:2:30:10'
@@ -24,8 +24,13 @@ minlen = 'MINLEN:50'
 f1 = ""
 f2 = ""
 
-#Read through files in input directory and find matching pair (SRX_AND_RUN_1.fastq.gz and SRX_AND_RUN_2.fastq.gz)
-for filename in os.listdir(indir):
+#Read through data files in input directory and execute shell command when conditions are met
+#(i.e. find matching pair (SRX_AND_RUN_1.fastq.gz and SRX_AND_RUN_2.fastq.gz)
+#indir MUST be sorted first as os.listdir() is in arbitrary order as an artifact of the file system 
+for filename in sorted(os.listdir(indir)):
+        #print filename
+        #continue
+        
         if filename.endswith("_1.fastq.gz"):
                 f1 = filename
         elif filename.endswith("_2.fastq.gz"):
@@ -44,7 +49,7 @@ for filename in os.listdir(indir):
                         f2unpaired = f2parts[0] + "_2.unpaired.fq"
                         trimlog = f1parts[0] + ".trimlog"
                 
-                        #Define trimmomatic parameters in the command
+                        #Define trimmomatic parameters in the command line
                         trimmomaticCMD = trimmomatic + " PE -threads 8 -phred33 -trimlog " + outdir + trimlog + \
                                 " " + f1 + " " + f2 + " " + outdir + f1paired + " " + outdir + f1unpaired + " " + \
                                 outdir + f2paired + " " + outdir + f2unpaired + " " + illclip + " " + lead + " " + trail + " " + slide + " " + minlen
