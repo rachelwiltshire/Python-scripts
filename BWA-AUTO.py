@@ -16,19 +16,19 @@ indir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/TERMINAL/trimmed/'
 outdir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/TERMINAL/aligned/'
 bwa = '/opt/crc/bio/BWA/0.6.2/bin/bwa'    #v.0.6.2 is recommended for aln/sampe/samse #v.0.7.12 for mem
 samtools = '/opt/crc/bio/samtools/1.2.231.0/bin/samtools'
-AfarRef = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/Anopheles-farauti-FAR1_SCAFFOLDS_AfarF2.fa'
+AfarRef = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/TERMINAL/trimmed/Anopheles-farauti-FAR1_SCAFFOLDS_AfarF2.fa'
 
 space = " "
-f1 = ""
-f2 = ""
+f1paired = ""
+f2paired = ""
 
 #Index the reference genome file
-bwaindexCMD = bwa + " index " + space + AfarRef
+bwaindexCMD = bwa + " index" + space + AfarRef
 print bwaindexCMD
 subprocess.call(bwaindexCMD, shell=True)
 
 #generate the fasta file index >> creates a file ref.fa.fai, with one record/line for each of the contigs in the ref.fa file
-samtoolsCMD = samtools + " faidx " + space + AfarRef
+samtoolsCMD = samtools + " faidx" + space + AfarRef
 print samtoolsCMD
 subprocess.call(samtoolsCMD, shell=True)
 
@@ -38,42 +38,55 @@ for filename in sorted(os.listdir(indir)):
         #print filename
         #continue
         
-        if filename.endswith("_1.fastq"):
-                f1 = filename
-        elif filename.endswith("_2.fastq"):
-                f2 = filename
+        if filename.endswith("_1.paired.fq"):
+                f1paired = filename
+        elif filename.endswith("_2.paired.fq"):
+                f2paired = filename
         else:
                 continue
 
-        if ((f1 != "" and f2 != "") and (f1[0:-11] == f2[0:-11])):
-                with gzip.open(f1) as f, gzip.open(f2) as g:
+        if ((f1paired != "" and f2paired != "") and (f1paired[0:-11] == f2paired[0:-11])):
+                with open(f1paired) as f, open(f2paired) as g:
                         f1parts = f.name.rsplit("_", 1)
-                        f1paired = f1parts[0] + "_1.paired.fq"
-                        f1unpaired = f1parts[0] + "_1.unpaired.fq"
+                        f1sai = f1parts[0] + "_1.pe.aligned.sai"
                         f2parts = g.name.rsplit("_", 1)
-                        f2paired = f2parts[0] + "_2.paired.fq"
-                        f2unpaired = f2parts[0] + "_2.unpaired.fq"
+                        f2sai = f2parts[0] + "_2.pe.aligned.sai"
+                        sam = f1parts[0] + ".pe.aligned.sam"
                 
-                        bwaalnCMD = bwa + " PE -threads 8 -phred33 " + " " + f1 + " " + f2 + " " + outdir + f1paired + \
-                                        " " + outdir + f1unpaired + " " + outdir + f2paired + " " + outdir + f2unpaired + \
+                        #generate intermediate .sai files by aligning paired reads to reference genome
+                        bwaalnCMD1 = bwa + " aln -t 12 -q 5 -l 32 -k 3 -n 9 -o 1" + space + AfarRef + space + f1paired + " >" + space + outdir + f1sai
                         
-                        print bwaalnCMD
-                        subprocess.call(bwaalnCMD, shell=True)
-                        f1 = ""
-                        f2 = ""
+                        print bwaalnCMD1
+                        
+                        bwaalnCMD2 = bwa + " aln -t 12 -q 5 -l 32 -k 3 -n 9 -o 1" + space + AfarRef + space + f2paired + " >" + space + outdir + f2sai
+                        
+                        print bwaalnCMD2
+                        
+                        subprocess.call(bwaalnCMD1, shell=True)
+                        
+                        subprocess.call(bwaalnCMD2, shell=True)
 
+                        #generate .sam file
+                        bwasamCMD = bwa + " sampe" + space + AfarRef + space + outdir + f1sai + space + outdir + f2sai + \
+                        indir + f1paired + indir + f2paired + " >" + space + outdir + sam
+                        
+                        print bwasamCMD
+                        
+                        subprocess.call(bwasamCMD, shell=True)
+                        
+                        f1paired = ""
+                        f2paired = ""
+                        
 #END
 
+#shell script
 #generate intermediate .sai files by aligning paired reads to reference genome
 bwa aln -t 12 -q 5 -l 32 -k 3 -n 9 -o 1 AfarRef SRX277192_Tanna2_run1-SRR849988-_1.paired.fq \
 > SRX277192_Tanna2_run1-SRR849988-_1.pe.aligned.sai
 bwa aln -t 12 -q 5 -l 32 -k 3 -n 9 -o 1 AfarRef SRX277192_Tanna2_run1-SRR849988-_2.paired.fq \
 > SRX277192_Tanna2_run1-SRR849988-_2.pe.aligned.sai
-
 #generate .sam file
-bwasamCMD = bwa + " sampe " + space + AfarRef \
 SRX277192_Tanna2_run1-SRR849988-_1.pe.aligned.sai SRX277192_Tanna2_run1-SRR849988-_2.pe.aligned.sai \
 SRX277192_Tanna2_run1-SRR849988-_1.paired.fq SRX277192_Tanna2_run1-SRR849988-_2.paired.fq \
 > SRX277192_Tanna2_run1-SRR849988.pe.aligned.sam
-
 #END
