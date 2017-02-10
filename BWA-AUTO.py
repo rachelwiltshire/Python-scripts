@@ -9,7 +9,7 @@
 #Broad Institute (16 Anopheles genomes project)
 
 #Import Python packages
-import os, gzip, subprocess
+import os, subprocess
 
 #Set variables
 indir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/TERMINAL/trimmed/'
