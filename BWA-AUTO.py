@@ -37,7 +37,6 @@ subprocess.call(samtoolsCMD, shell=True)
 for filename in sorted(os.listdir(indir)):      
         #print filename
         #continue
-        
         if filename.endswith("_1.paired.fq"):
                 f1paired = filename
         elif filename.endswith("_2.paired.fq"):
@@ -55,23 +54,16 @@ for filename in sorted(os.listdir(indir)):
                 
                         #generate intermediate .sai files by aligning paired reads to reference genome
                         bwaalnCMD1 = bwa + " aln -t 12 -q 5 -l 32 -k 3 -n 9 -o 1" + space + AfarRef + space + f1paired + " >" + space + outdir + f1sai
-                        
-                        print bwaalnCMD1
-                        
+                        print bwaalnCMD1 
                         bwaalnCMD2 = bwa + " aln -t 12 -q 5 -l 32 -k 3 -n 9 -o 1" + space + AfarRef + space + f2paired + " >" + space + outdir + f2sai
-                        
                         print bwaalnCMD2
-                        
                         subprocess.call(bwaalnCMD1, shell=True)
-                        
                         subprocess.call(bwaalnCMD2, shell=True)
 
                         #generate .sam file
                         bwasamCMD = bwa + " sampe" + space + AfarRef + space + outdir + f1sai + space + outdir + f2sai + \
                         indir + f1paired + indir + f2paired + " >" + space + outdir + sam
-                        
                         print bwasamCMD
-                        
                         subprocess.call(bwasamCMD, shell=True)
                         
                         f1paired = ""
