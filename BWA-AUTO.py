@@ -8,7 +8,7 @@
 #This script is specifically for the WGS gDNA PE libraries AFar April 2013 sequenced on Illumina HiSeq2000 v.1.9
 #Broad Institute (16 Anopheles genomes project)
 
-#Import Python packages
+#Import dependencies
 import os, subprocess
 
 #Set variables
@@ -61,8 +61,8 @@ for filename in sorted(os.listdir(indir)):
                         subprocess.call(bwaalnCMD2, shell=True)
 
                         #generate .sam file
-                        bwasamCMD = bwa + " sampe" + space + AfarRef + space + outdir + f1sai + space + outdir + f2sai + \
-                        indir + f1paired + indir + f2paired + " >" + space + outdir + sam
+                        bwasamCMD = bwa + " sampe" + space + AfarRef + space + outdir + f1sai + space + outdir + f2sai + space + \
+                                        indir + f1paired + space + indir + f2paired + " >" + space + outdir + sam
                         print bwasamCMD
                         subprocess.call(bwasamCMD, shell=True)
                         
@@ -78,7 +78,7 @@ bwa aln -t 12 -q 5 -l 32 -k 3 -n 9 -o 1 AfarRef SRX277192_Tanna2_run1-SRR849988-
 bwa aln -t 12 -q 5 -l 32 -k 3 -n 9 -o 1 AfarRef SRX277192_Tanna2_run1-SRR849988-_2.paired.fq \
 > SRX277192_Tanna2_run1-SRR849988-_2.pe.aligned.sai
 #generate .sam file
-SRX277192_Tanna2_run1-SRR849988-_1.pe.aligned.sai SRX277192_Tanna2_run1-SRR849988-_2.pe.aligned.sai \
+bwa sampe AfarRef SRX277192_Tanna2_run1-SRR849988-_1.pe.aligned.sai SRX277192_Tanna2_run1-SRR849988-_2.pe.aligned.sai \
 SRX277192_Tanna2_run1-SRR849988-_1.paired.fq SRX277192_Tanna2_run1-SRR849988-_2.paired.fq \
 > SRX277192_Tanna2_run1-SRR849988.pe.aligned.sam
 #END
