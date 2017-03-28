@@ -39,9 +39,9 @@ sam = ""                        #initializing variable to zero length string
 dict = "Anopheles-farauti-FAR1_SCAFFOLDS_AfarF2.dict"
 
 #Create a sequence dictionary that reads fasta or fasta.gz files containing reference sequences, and writes them as a .sam file
-#picardseqdictCMD = picard + "CreateSequenceDictionary" + " REFERENCE=" + AfarRef + " OUTPUT=" + dict
-#print picardseqdictCMD
-#subprocess.call(picardseqdictCMD, shell=True)
+picardseqdictCMD = picard + "CreateSequenceDictionary" + " REFERENCE=" + AfarRef + " OUTPUT=" + dict
+print picardseqdictCMD
+subprocess.call(picardseqdictCMD, shell=True)
 
 #Run through filenames in directory and execute shell command when conditions are met
 #indir MUST be sorted first as os.listdir() is in arbitrary order as an artifact of the filesystem
@@ -56,14 +56,14 @@ for filename in sorted(os.listdir(indir)):
                         processall = True
         else:
                 continue
-        #print filename                 #output: SRX277xxx_Name_runx_SRR8xxxxx_.pe.aligned.sam
-        #continue
+        print filename                 #output: SRX277xxx_Name_runx_SRR8xxxxx_.pe.aligned.sam
+        continue
 
         with open(sam) as f:
                 fparts = f.name.rsplit('_',1)
                 print fparts            #output: ['SRX277xxx_Name_runx_SRR8xxxxx', '.pe.aligned.sam']
-                #print fparts[0]        #output: SRX277xxx_Name_runx_SRR8xxxxx
-                #print fparts[1]        #output: .pe.aligned.sam
+                print fparts[0]        #output: SRX277xxx_Name_runx_SRR8xxxxx
+                print fparts[1]        #output: .pe.aligned.sam
                 #continue
                 #sys.exit(0)
 
@@ -76,9 +76,9 @@ for filename in sorted(os.listdir(indir)):
                 dedup_metrics = fparts[0] + ".dedup.metrics.txt"
 
 #Clean the alignment - soft clip any reads that extend beyond the edge of an assembly - reads are marked as MapQ0
-        #picardcleanCMD = picard + "CleanSam" + " INPUT=" + sam + " OUTPUT=" + clean + space + VAL
-        #print picardcleanCMD
-        #subprocess.call(picardcleanCMD, shell=True)
+        picardcleanCMD = picard + "CleanSam" + " INPUT=" + sam + " OUTPUT=" + clean + space + VAL
+        print picardcleanCMD
+        subprocess.call(picardcleanCMD, shell=True)
 
 #Add or replace read groups in an input .sam file to allow merging multiple .bam files (GATK does not support .sam files without headers)
         txt = sys.argv[1]
@@ -96,23 +96,23 @@ for filename in sorted(os.listdir(indir)):
                                 RGPL = tparts[4]
                                 RGPU = tparts[5]
                                 RGSM = tparts[6]                        
-                                #pprint.pprint(tparts)
+                                pprint.pprint(tparts)
                         
-                                #picardreadgroupsCMD = picard + "AddOrReplaceReadGroups" + " INPUT=" + clean + " OUTPUT=" + readgroup \
-                                #+ space + INDEX + space + COORD + " RGID=" + RGID + " RGLB=" + RGLB + " RGPL=" + RGPL + " RGPU=" \
-                                #+ RGPU + " RGSM=" + RGSM + space + VAL
+                                picardreadgroupsCMD = picard + "AddOrReplaceReadGroups" + " INPUT=" + clean + " OUTPUT=" + readgroup \
+                                + space + INDEX + space + COORD + " RGID=" + RGID + " RGLB=" + RGLB + " RGPL=" + RGPL + " RGPU=" \
+                                + RGPU + " RGSM=" + RGSM + space + VAL
 
-                                #if fparts[0].find(RUN) > -1:
-                                        #print "found " + RUN + " in " + fparts[0]
-                                        #pprint.pprint(picardreadgroupsCMD)
-                                        #subprocess.call(picardreadgroupsCMD, shell=True)
-                                #else:
-                                        #continue
+                                if fparts[0].find(RUN) > -1:
+                                        print "found " + RUN + " in " + fparts[0]
+                                        pprint.pprint(picardreadgroupsCMD)
+                                        subprocess.call(picardreadgroupsCMD, shell=True)
+                                else:
+                                        continue
 
 #Sort by reference - sort reads into .bam files based on the reference assembly to which they were mapped
-        #picardsortsamCMD = picard + "SortSam" + " INPUT=" + readgroup + " OUTPUT=" + sorted + space + COORD + space + VAL
-        #print picardsortsamCMD
-        #subprocess.call(picardsortsamCMD, shell=True)
+        picardsortsamCMD = picard + "SortSam" + " INPUT=" + readgroup + " OUTPUT=" + sorted + space + COORD + space + VAL
+        print picardsortsamCMD
+        subprocess.call(picardsortsamCMD, shell=True)
 
 #Collect alignment summary metrics - details quality of read alignments and proportion of reads passing machine signal-to-noise threshold quality filters
         picardalnmetricsCMD = picard + "CollectAlignmentSummaryMetrics" + " REFERENCE_SEQUENCE=" + AfarRef + " INPUT=" + sorted \
@@ -121,14 +121,14 @@ for filename in sorted(os.listdir(indir)):
         subprocess.call(picardalnmetricsCMD, shell=True)
 
 #Matches all read pairs with identical 5' coordinates and mapping orientations and marks as duplicates all but the best read pair (highest sum of base qualities where Q >=15)
-        #picardmarkCMD = picard + "MarkDuplicates" + " INPUT=" + sorted + " OUTPUT=" + marked + space + INDEX + " METRICS_FILE=" \
-                                #+ dedup_metrics + space + VAL
-        #print picardmarkCMD
-        #subprocess.call(picardmarkCMD, shell=True)
+        picardmarkCMD = picard + "MarkDuplicates" + " INPUT=" + sorted + " OUTPUT=" + marked + space + INDEX + " METRICS_FILE=" \
+                                + dedup_metrics + space + VAL
+        print picardmarkCMD
+        subprocess.call(picardmarkCMD, shell=True)
 
 #Index coordinate-sorted .bam file for variant calling in GATK
-        #picardbamindexCMD = picard + "BuildBamIndex" + " INPUT=" + marked + space + VAL
-        #print picardbamindexCMD
-        #subprocess.call(picardbamindexCMD, shell=True)
+        picardbamindexCMD = picard + "BuildBamIndex" + " INPUT=" + marked + space + VAL
+        print picardbamindexCMD
+        subprocess.call(picardbamindexCMD, shell=True)
 
 #END
