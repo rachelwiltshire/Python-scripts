@@ -50,7 +50,6 @@ for filename in sorted(os.listdir(indir)):
                 sam = filename
         else:
                 continue
-
         if (len(sys.argv) > 2 and sys.argv[2] == filename) or processall == True:
                 if processall == False:
                         processall = True
@@ -66,8 +65,6 @@ for filename in sorted(os.listdir(indir)):
                 print fparts[1]        #output: .pe.aligned.sam
                 #continue
                 #sys.exit(0)
-
-
                 clean = fparts[0] + ".clean.sam"
                 readgroup = fparts[0] + ".rdgrp.sam"
                 sorted = fparts[0] + ".sorted.bam"
@@ -97,11 +94,9 @@ for filename in sorted(os.listdir(indir)):
                                 RGPU = tparts[5]
                                 RGSM = tparts[6]                        
                                 pprint.pprint(tparts)
-                        
                                 picardreadgroupsCMD = picard + "AddOrReplaceReadGroups" + " INPUT=" + clean + " OUTPUT=" + readgroup \
                                 + space + INDEX + space + COORD + " RGID=" + RGID + " RGLB=" + RGLB + " RGPL=" + RGPL + " RGPU=" \
                                 + RGPU + " RGSM=" + RGSM + space + VAL
-
                                 if fparts[0].find(RUN) > -1:
                                         print "found " + RUN + " in " + fparts[0]
                                         pprint.pprint(picardreadgroupsCMD)
