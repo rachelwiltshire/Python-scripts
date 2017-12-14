@@ -28,7 +28,7 @@ else:
 #sys.exit(0)
 
 indir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/TERMINAL/aligned/PICTEST'
-outdir = '/afs/crc/nd.edu/user/r/rwiltshi/FARAUTI/TERMINAL/picard/PICTEST'
+outdir = '/afs/crc.nd.edu/user/r/rwiltshi/FARAUTI/TERMINAL/picard/PICTEST'
 picard = '/opt/crc/bio/picardtools/1.119/bin/'
 VAL = "VALIDATION_STRINGENCY=LENIENT"
 INDEX = "CREATE_INDEX=TRUE"
