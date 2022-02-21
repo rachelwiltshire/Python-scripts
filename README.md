@@ -8,7 +8,7 @@ The second step in my WGS processing pipeline. Automates the *BWA* shell script,
 Removes [unmapped scaffolds] and [mapped scaffolds with only one SNP] from the .map file to facilitate *SNeP* Ne analysis. *SNeP* errors out when it hits a 0 or has <2 SNPs to compare
 
 - #### mozGoldenPathDmel.py
-Creates multiple alignments (.maf) containing selected mosquito seqs. aligned to Drosophila melanogaster dm6.chr assemblies (http://hgdownload.soe.ucsc.edu/goldenPath/dm6/multiz124way/maf/) for further evolutionary inference.
+Creates multiple alignments (.maf) containing selected mosquito seqs. aligned to *Drosophila melanogaster* dm6.chr assemblies (http://hgdownload.soe.ucsc.edu/goldenPath/dm6/multiz124way/maf/) for further evolutionary inference.
 
 - #### SCAFF2CHROM.py
 Maps scaffolds in a .vcf file to chromosomes in the .agp file
